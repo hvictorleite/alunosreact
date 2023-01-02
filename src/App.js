@@ -16,7 +16,8 @@ function App() {
 
   // Enviando Request GET com o axios para a API
   const pedidoGet = async() => {
-    await axios.get(baseUrl).then(response => {
+    await axios.get(baseUrl)
+    .then(response => {
       setData(response.data);
     }).catch(error => {
       console.log(error);
@@ -29,7 +30,7 @@ function App() {
 
   return (
 
-    <div className="App">
+    <div className="aluno-container">
       <br />
       <h3>Cadastro de Alunos</h3>
       <header className="App-header">
@@ -39,11 +40,11 @@ function App() {
       <table className="table table-bordered">
         <thead>
           <tr>
-            <tr>Id</tr>
-            <tr>Nome</tr>
-            <tr>Email</tr>
-            <tr>Idade</tr>
-            <tr>Operação</tr>
+            <th>Id</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Idade</th>
+            <th>Operação</th>
           </tr>
         </thead>
         <tbody>

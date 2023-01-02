@@ -25,6 +25,8 @@ function App() {
   const [modalIncluir, setModalIncluir] = useState(false);
   //  Estado para exibição de janela modal de edição
   const [modalEditar, setModalEditar] = useState(false);
+  //  Estado para exibição de janela modal de exclusão
+  const [modalExcluir, setModalExcluir] = useState(false);
 
   // Método que guarda os dados do aluno informados nos inputs das janelas modais,
   // e usa o método setAlunoSelecionado para atualizar o estado
@@ -46,10 +48,15 @@ function App() {
     setModalEditar(!modalEditar);
   }
 
-  // Método para editar o aluno selecionado
+  // Método para abrir/fechar janela modal de exclusão
+  const abrirFecharModalExcluir = () => {
+    setModalExcluir(!modalExcluir);
+  }
+
+  // Método para editar/excluir o aluno selecionado
   const selecionarAluno = (aluno, opcao) => {
 	  setAlunoSelecionado(aluno);
-	  (opcao==="Editar") && abrirFecharModalEditar();
+	  (opcao==="Editar") ? abrirFecharModalEditar(): abrirFecharModalExcluir();
   }
 
   // Enviando Request GET com o axios para a API
@@ -78,7 +85,7 @@ function App() {
   }
 
   // Enviando Request PUT com o axios para a API.
-  // Editando aluno na API
+  // Editando aluno da API
   const pedidoPut = async() => {
     alunoSelecionado.idade = parseInt(alunoSelecionado.idade);
     await axios.put(baseUrl+"/"+alunoSelecionado.id, alunoSelecionado)
@@ -93,6 +100,18 @@ function App() {
         }
       });
       abrirFecharModalEditar();
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
+  // Enviando Request DELETE com o axios para a API.
+  // Excluindo aluno da API
+  const pedidoDelete = async() => {
+    await axios.delete(baseUrl+"/"+alunoSelecionado.id)
+    .then(response => {
+      setData(data.filter(aluno => aluno.id !== response.data));
+      abrirFecharModalExcluir();
     }).catch(error => {
       console.log(error);
     });
@@ -130,7 +149,7 @@ function App() {
               <td>{aluno.idade}</td>
               <td>
                 <button class="btn btn-primary" onClick={()=>{selecionarAluno(aluno, "Editar")}}>Editar</button> {" "}
-                <button class="btn btn-danger">Excluir</button>
+                <button class="btn btn-danger" onClick={()=>{selecionarAluno(aluno, "Excluir")}}>Excluir</button>
               </td>
             </tr>
           ))}
@@ -183,6 +202,16 @@ function App() {
         <ModalFooter>
           <button className="btn btn-primary" onClick={()=>{pedidoPut()}}>Editar</button>{" "}
           <button className="btn btn-danger" onClick={()=>{abrirFecharModalEditar()}}>Cancelar</button>
+        </ModalFooter>
+      </Modal>
+
+      <Modal isOpen={modalExcluir}>
+        <ModalBody>
+          <p>Confirma a exclusão deste(a) aluno(a): {alunoSelecionado && alunoSelecionado.nome} ?</p>
+        </ModalBody>
+        <ModalFooter>
+          <button className="btn btn-danger" onClick={()=>{pedidoDelete()}}>Sim</button>
+          <button className="btn btn-secondary" onClick={()=>{abrirFecharModalExcluir()}}>Não</button>
         </ModalFooter>
       </Modal>
 
